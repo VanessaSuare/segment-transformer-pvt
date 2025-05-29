@@ -1,63 +1,75 @@
-# Librerías principales
 import streamlit as st
 from PIL import Image
 import numpy as np
-
-# Funciones utilitarias propias del proyecto
 from app.utils import load_model, preprocess_image, run_inference, postprocess_output
 
-# Configura los parámetros de la interfaz de Streamlit
+from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
+import av
+
+# Configura la página de Streamlit
 st.set_page_config(page_title="Segmentación con PVT", layout="wide")
 st.title("Segmentación de Imágenes con Pyramid Vision Transformer")
 
-# ------------------------------------------------------------------------
-# Carga del modelo una sola vez para evitar múltiples inicializaciones
-# Esto es útil para eficiencia al trabajar con Streamlit.
-# Se cachea el modelo utilizando el decorador @st.cache_resource
-# ------------------------------------------------------------------------
+# Carga el modelo preentrenado una sola vez para eficiencia
 @st.cache_resource
 def load():
     return load_model(
-        config_path="model/configs/pvt_config.py",     # Ruta al archivo .py con arquitectura del modelo
-        checkpoint_path="model/weights/pvtv2.pth",     # Pesos preentrenados de PVT v2
-        device="cpu"                                   # Usar "cuda:0" si se tiene GPU disponible
+        config_path="model/configs/pvt_config.py",
+        checkpoint_path="model/weights/pvtv2.pth",
+        device="cpu"  # Cambiar a 'cuda:0' si se usa GPU
     )
 
-# Carga el modelo al iniciar la aplicación
 model = load()
 
-# ------------------------------------------------------------------------
-# Panel lateral de Streamlit para que el usuario cargue una imagen
-# ------------------------------------------------------------------------
+# 🧠 Subida de imagen desde la interfaz Streamlit
 st.sidebar.header("Cargar Imagen")
-uploaded_file = st.sidebar.file_uploader(
-    "Selecciona una imagen", type=["jpg", "jpeg", "png"]
-)
+uploaded_file = st.sidebar.file_uploader("Selecciona una imagen", type=["jpg", "jpeg", "png"])
 
-# ------------------------------------------------------------------------
-# Si el usuario carga una imagen, se ejecuta todo el pipeline:
-# visualización, preprocesamiento, inferencia y postprocesamiento
-# ------------------------------------------------------------------------
+# 📷 Segmentación en vivo desde cámara
+class VideoTransformer(VideoTransformerBase):
+    def __init__(self):
+        self.model = load_model(
+            config_path="model/configs/pvt_config.py",
+            checkpoint_path="model/weights/pvtv2.pth",
+            device="cpu"
+        )
+
+    def transform(self, frame: av.VideoFrame) -> np.ndarray:
+        image = frame.to_ndarray(format="bgr24")
+        img_pil = Image.fromarray(image[..., ::-1])
+        input_tensor = preprocess_image(img_pil)
+        result = run_inference(self.model, input_tensor)
+        result_img = postprocess_output(result, img_pil, self.model)
+        return np.array(result_img)
+
+st.header("📷 Segmentación en Tiempo Real desde Cámara")
+webrtc_streamer(key="realtime", video_transformer_factory=VideoTransformer)
+
+# Imagen cargada manualmente
 if uploaded_file:
-    # Carga y convierte la imagen a RGB
     image = Image.open(uploaded_file).convert("RGB")
-
-    # Muestra la imagen original
     st.image(image, caption="Imagen Original", use_container_width=True)
 
-    # Preprocesa la imagen para adaptarla al modelo (array numpy)
     input_tensor = preprocess_image(image)
-
-    # Realiza inferencia usando el modelo cargado
     output = run_inference(model, input_tensor)
-
-    # Postprocesa el resultado y lo convierte a imagen superpuesta
     result_img = postprocess_output(output, image, model)
 
-    # Muestra la imagen segmentada al usuario
     st.subheader("Segmentación Generada")
     st.image(result_img, use_container_width=True)
-
-# Si no se ha cargado imagen, se muestra mensaje informativo
 else:
-    st.info("Por favor sube una imagen para segmentar.")
+    st.info("Por favor sube una imagen o usa la cámara para segmentar.")
+
+# 🧠 Mostrar leyenda de clases
+st.sidebar.markdown("###Leyenda de Clases")
+class_names = model.dataset_meta['classes']
+palette = model.dataset_meta['palette']
+
+for cls_name, color in zip(class_names, palette):
+    r, g, b = color
+    color_hex = f'#{r:02x}{g:02x}{b:02x}'
+    st.sidebar.markdown(
+        f'<div style="display: flex; align-items: center;">'
+        f'<div style="width: 20px; height: 20px; background-color:{color_hex}; margin-right:10px; border: 1px solid #000;"></div>'
+        f'<span>{cls_name}</span></div>',
+        unsafe_allow_html=True
+    )

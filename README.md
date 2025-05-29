@@ -15,11 +15,11 @@ La solución se basa en el framework [MMSegmentation](https://github.com/open-mm
 
 ---
 
-## 📚 Basado en
+## Basado en
 
-- 📄 Paper: [Pyramid Vision Transformer](https://paperswithcode.com/paper/pyramid-vision-transformer-a-versatile)
-- 💻 Repo base: [https://github.com/whai362/PVTv2-Seg](https://github.com/whai362/PVTv2-Seg)
-- ⚙️ Framework: [https://github.com/open-mmlab/mmsegmentation](https://github.com/open-mmlab/mmsegmentation)
+- Paper: [Pyramid Vision Transformer](https://paperswithcode.com/paper/pyramid-vision-transformer-a-versatile)
+- Repo base: [https://github.com/whai362/PVTv2-Seg](https://github.com/whai362/PVTv2-Seg)
+- Framework: [https://github.com/open-mmlab/mmsegmentation](https://github.com/open-mmlab/mmsegmentation)
 
 ---
 
@@ -52,7 +52,7 @@ http://localhost:8501
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 segment-transformer-pvt/
@@ -70,15 +70,15 @@ segment-transformer-pvt/
 
 ---
 
-## 🖼️ Ejemplo de uso
+## Ejemplo de uso
 
-1. El usuario carga una imagen urbana desde la interfaz.
+1. El usuario carga una imagen urbana o enciende su camara desde la interfaz.
 2. El modelo la segmenta automáticamente usando PVTv2.
 3. Se superpone el resultado con colores por clase.
 
 ---
 
-## 🧠 Consideraciones Técnicas
+## Consideraciones Técnicas
 
 - Se usa `mmsegmentation` para cargar modelos y realizar inferencias.
 - Se adaptó el archivo de configuración del modelo y se integró el checkpoint `.pth`.
@@ -86,7 +86,7 @@ segment-transformer-pvt/
 
 ---
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - Python 3.10
 - PyTorch 2.0
@@ -97,7 +97,7 @@ segment-transformer-pvt/
 
 ---
 
-## ✍️ Autores
+## Autores
 
 - **Dayanna Vanessa Suarez Mazuera / VanessaSuare**  
 - **Juan Camilo Buitrago Gonzalez / juancbuitrago**  
