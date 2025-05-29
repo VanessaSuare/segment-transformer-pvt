@@ -1,0 +1,9 @@
+torch
+mmcv==2.0.1
+mmsegmentation
+mmengine==0.8.4
+streamlit
+opencv-python-headless
+Pillow
+ftfy
+regex

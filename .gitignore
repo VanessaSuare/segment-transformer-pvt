@@ -1,0 +1,97 @@
+# ========================================
+# Python
+# ========================================
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+.Python
+.env
+.venv
+env/
+venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========================================
+# Jupyter / IPython
+# ========================================
+.ipynb_checkpoints
+*.ipynb
+
+# ========================================
+# IDEs
+# ========================================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ========================================
+# System / OS
+# ========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================================
+# Logs and runtime files
+# ========================================
+*.log
+*.pid
+
+# ========================================
+# Docker
+# ========================================
+*.container
+*.log
+*.pid
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ========================================
+# Streamlit
+# ========================================
+.streamlit/config.toml
+.streamlit/credentials.toml
+
+# ========================================
+# Model files / Checkpoints
+# ========================================
+model/weights/
+*.pth
+*.pt
+*.onnx
+
+# ========================================
+# Configs / Data
+# ========================================
+*.json
+*.yaml
+*.yml
+*.cfg
+
+# ========================================
+# Output / Results
+# ========================================
+*.jpg
+*.png
+*.bmp
+result.*
+output/
+inference_results/
+demo_outputs/
+
+# ========================================
+# Misc
+# ========================================
+*.bak
+*.swp
+*.tmp
